@@ -69,6 +69,7 @@ tags:
              github_token: ${{ secrets.GITHUB_TOKEN }}  # 使用内置令牌
              publish_dir: ./public  # 源目录
              publish_branch: gh-pages  # 目标分支
+             force_orphan: true  # 强制目标分支gh-pages为孤立分支，仅保留一个提交
    ```
 
 3. `commit`到本地`git`库，并`push`到`Github`服务器端的`main`分支。
@@ -77,3 +78,6 @@ tags:
    1. 进入`main`分支，`commit`到本地`git`库，`push`到`Github`服务器端的`main`分支。
    
 5. 现在发布一篇文章后，只需将`main`分支修改提交到`Github`服务器端的`main`分支，然后等待Github库的[actions](https://github.com/lbgitjp/blog/actions "actions")工作流完成即可查看部署好的站点，与使用工作流之前相比，大幅减少了复杂度。
+
+## 3. 注意事项
+1. 使用使用GitHub Actions工作流后我们不应手工修改`gh-pages`分支中的内容，其中所有内容都应由`main`分支生成，例如：在[建设博客站点 - 4. 设置域名](../build-blog-4 "建设博客站点 - 4. 设置域名")中在`gh-pages`分支添加一个文件名为`CNAME`的文件，该文件现在应该放到`main`分支的`static/`目录下，即应位于`static/CNAME`。该目录专门用于存放静态资产（如图像、CSS文件或验证文件），`Hugo`在运行构建命令（如`hugo --minify`）时，会自动将`static/`中的内容直接复制到输出目录（默认为`public/`）的根目录中。

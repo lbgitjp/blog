@@ -27,7 +27,7 @@ weight: # You can add weight to some posts to override the default sorting (date
 `hugo v0.154.2-f66d0944461bf32c4e69588bc3e093f14e4e149d+extended+withdeploy windows/amd64 BuildDate=2026-01-02T16:08:44Z VendorInfo=gohugoio`
 
 ## 2. 创建站点
-1. 打开命令行，运行`hugo new site blog`，生成了新的骨架站点`blog`，这个目录目录内有很多空目录和一个hugo配置文件`hugo.toml`，除了`content`目录，`themes`目录和hugo配置文件`hugo.toml`外，其它目录都没有用，删除后也没发行什么问题。
+1. 打开命令行，运行`hugo new site blog`，生成了新的骨架站点`blog`，这个目录内有很多空目录和一个hugo配置文件`hugo.toml`，其中最常用的是`content`目录，所有的文章都是放在该目录下，`themes`目录，`static`目录和hugo配置文件`hugo.toml`等在本教程的后续文章中也会涉及到，
 
 2. 运行`cd blog`进入该站点目录，然后运行`hugo server`，就启动了站点`http://localhost:1313/`，在浏览器中打开该站点会显示`Page Not Found`，因为目前还只是一个空站点，没有任何内容。
 
