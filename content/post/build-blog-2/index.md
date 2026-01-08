@@ -18,6 +18,7 @@ tags:
 
 ## 2. 创建Github库
 1. 打开[Github](https://github.com/ "Github")，创建一个Github库`blog`，个人站点将会上传到该库中。
+   ![blog](blog.png "blog")
 
 2. 运行`git clone https://github.com/lbgitjp/blog.git`将Github库克隆到本地。
 

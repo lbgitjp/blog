@@ -58,8 +58,10 @@ tags:
 1. 打开https://lbgitjp.github.io/blog/ 会出现错误，因为其指向的是`blog`库的`main`分支，该分支是Hugo原始站点，而不是编译完成后的静态站点。
 
 2. 在Github库的[Settings](https://github.com/lbgitjp/blog/settings "Settings")导航中进入到[Pages](https://github.com/lbgitjp/blog/settings/pages "Pages")设置页，将**Build and deployment**下的**Branch**选择为`gh-pages`分支并保存设置。
+   ![gh-pages](gh-pages.png "gh-pages")
 
 3. 这时候如果打开Github库的[actions](https://github.com/lbgitjp/blog/actions "actions")页就会发现**pages build and deployment**工作流正在运行。
+   ![workflows](workflows.png "workflows")
 
 4. 等上面的工作流运行完成，打开https://lbgitjp.github.io/blog/ 就可以看到部署完成的站点。
 
