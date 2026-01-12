@@ -163,4 +163,4 @@ $$ \theta_{new} = \theta_{old} - \alpha \nabla_{\theta} L $$
 | `CrossEntropyLoss` | **信息论** | 负对数似然、KL散度 |
 | `loss.backward()` | **微积分** | 链式法则 (Chain Rule) |
 
-通过理解这些数学原理，你就不再只是在调用 API，而是在操纵高维空间中的向量几何，通过概率分布来捕捉语言的本质。
+通过理解这些数学原理，再次阅读Transformer 源码时就明白它们在调用 PyTorch或 TensorFlow的API的背后，是在操纵高维空间中的向量几何，通过概率分布来捕捉语言的本质。
