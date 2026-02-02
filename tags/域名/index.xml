@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>域名 on Hugo Theme Stack Starter</title><link>https://lbgitjp.github.io/blog/tags/%E5%9F%9F%E5%90%8D/</link><description>Recent content in 域名 on Hugo Theme Stack Starter</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 06 Jan 2026 07:00:00 +0000</lastBuildDate><atom:link href="https://lbgitjp.github.io/blog/tags/%E5%9F%9F%E5%90%8D/index.xml" rel="self" type="application/rss+xml"/><item><title>建设博客站点 - 4. 设置域名</title><link>https://lbgitjp.github.io/blog/p/build-blog-4/</link><pubDate>Tue, 06 Jan 2026 07:00:00 +0000</pubDate><guid>https://lbgitjp.github.io/blog/p/build-blog-4/</guid><description>&lt;h2 id="1-域名问题"&gt;1. 域名问题
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;每个Github用户都有一个独有的二级域名和其账号相关联，如用户为&lt;code&gt;lbgitjp&lt;/code&gt;的二级域名就是&lt;a class="link" href="https://lbgitjp.github.io/" title="https://lbgitjp.github.io/"
+target="_blank" rel="noopener"
+&gt;https://lbgitjp.github.io/&lt;/a&gt;，其中主域名为&lt;a class="link" href="https://github.io/" title="https://github.io/"
+target="_blank" rel="noopener"
+&gt;https://github.io/&lt;/a&gt;，属于Github官方。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;目前所建的站点是通过&lt;a class="link" href="https://lbgitjp.github.io/" title="https://lbgitjp.github.io/"
+target="_blank" rel="noopener"
+&gt;https://lbgitjp.github.io/&lt;/a&gt;下一级子目录&lt;a class="link" href="https://lbgitjp.github.io/blog/" title="https://lbgitjp.github.io/blog/"
+target="_blank" rel="noopener"
+&gt;https://lbgitjp.github.io/blog/&lt;/a&gt;来托管和访问的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;每个Github用户可以通过在创建一个和其独有的独有的二级域名相同名称的库-如&lt;code&gt;lbgitjp.github.io&lt;/code&gt;来托管静态站点，这样就可以通过二级域名来直接访问该站点，而不需要通过下一级子目录&lt;code&gt;blog&lt;/code&gt;来访问站点，但每个Github账号只能创建一个这样的库，无法做到托管多个站点。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;而且域名&lt;code&gt;lbgitjp.github.io&lt;/code&gt;是&lt;code&gt;github.io&lt;/code&gt;的子域名，对自己的品牌不太友好，因此最好能改成用户自己的域名。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="2-设置域名"&gt;2. 设置域名
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;用户可以在&lt;a class="link" href="https://www.cloudflare.com/" title="https://www.cloudflare.com/"
+target="_blank" rel="noopener"
+&gt;https://www.cloudflare.com/&lt;/a&gt;站点或其它域名管理站点注册一个属于自己的域名。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在域名的DNS管理中添加一个&lt;code&gt;CNAME&lt;/code&gt;记录，将该记录指向用户在Github的二级域名&lt;a class="link" href="https://lbgitjp.github.io/" title="https://lbgitjp.github.io/"
+target="_blank" rel="noopener"
+&gt;https://lbgitjp.github.io/&lt;/a&gt;。例如，添加一条&lt;code&gt;test.xxx.com&lt;/code&gt;的域名，其指向&lt;code&gt;lbgitjp.github.io&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果添加的是主域名&lt;code&gt;CNAME&lt;/code&gt;记录，可能需要等待一段时间才能全网生效，如果是添加的子域名&lt;code&gt;CNAME&lt;/code&gt;记录，应该会即使生效。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="3-发布站点"&gt;3. 发布站点
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;进入到本地&lt;code&gt;blog&lt;/code&gt;库的&lt;code&gt;main&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;修改其中的&lt;code&gt;hugo.toml&lt;/code&gt;文件，将&lt;code&gt;baseurl&lt;/code&gt;项改为
+&lt;code&gt;baseurl = &amp;quot;https://test.xxx.com/&amp;quot;&lt;/code&gt;，其中&lt;code&gt;test.xxx.com&lt;/code&gt;就是新添加的&lt;code&gt;CNAME&lt;/code&gt;记录。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在命令行中运行如下命令，将本地&lt;code&gt;main&lt;/code&gt;分支中的内容提交到Github服务器&lt;code&gt;blog&lt;/code&gt;库的&lt;code&gt;main&lt;/code&gt;分支中。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add .
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;修改baseurl&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在命令行运行&lt;code&gt;hugo&lt;/code&gt;命令编译站点，拷贝&lt;code&gt;public&lt;/code&gt;中的内容。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行命令&lt;code&gt;git checkout gh-pages&lt;/code&gt;切换到&lt;code&gt;gh-pages&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;将拷贝的&lt;code&gt;public&lt;/code&gt;中的内容覆盖到&lt;code&gt;gh-pages&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在&lt;code&gt;gh-pages&lt;/code&gt;分支添加一个文件名为&lt;code&gt;CNAME&lt;/code&gt;的文件，其中只有一行内容&lt;code&gt;test.xxx.com&lt;/code&gt;，就是前面新添加的域名。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在命令行中运行如下命令，将本地&lt;code&gt;gh-pages&lt;/code&gt;分支中的内容提交到Github上&lt;code&gt;blog&lt;/code&gt;库的&lt;code&gt;gh-pages&lt;/code&gt;分支中。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git add .
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git commit -m &lt;span class="s2"&gt;&amp;#34;添加CNAME&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git push
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;等Github服务端的actions工作流运行完成，就可以通过新域名&lt;code&gt;https://test.xxx.com/&lt;/code&gt;来访问部署完成的站点。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="3-注意事项"&gt;3. 注意事项
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在&lt;code&gt;CNAME&lt;/code&gt;中设置域名&lt;code&gt;test.xxx.com&lt;/code&gt;会导致通过原来的&lt;code&gt;https://lbgitjp.github.io/blog/&lt;/code&gt;子目录访问会自动重定向到域名地址&lt;code&gt;https://test.xxx.com/&lt;/code&gt;，因此如果域名&lt;code&gt;test.xxx.com&lt;/code&gt;失效了，通过&lt;code&gt;https://lbgitjp.github.io/blog/&lt;/code&gt;或&lt;code&gt;https://test.xxx.com/&lt;/code&gt;都无法访问该站点，此时需要删除&lt;code&gt;CNAME&lt;/code&gt;文件才能恢复原来的&lt;code&gt;https://lbgitjp.github.io/blog/&lt;/code&gt;子目录访问。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果没有自己的域名，想通过在&lt;code&gt;blog&lt;/code&gt;库的&lt;code&gt;CNAME&lt;/code&gt;中设置每个Github用户独有的二级域名&lt;code&gt;lbgitjp.github.io&lt;/code&gt;是不能达到通过二级域名&lt;code&gt;https://lbgitjp.github.io/&lt;/code&gt;来访问&lt;code&gt;blog&lt;/code&gt;站点的，仍然需要通过&lt;code&gt;https://lbgitjp.github.io/blog/&lt;/code&gt;来访问，通过&lt;code&gt;https://lbgitjp.github.io/blog/&lt;/code&gt;访问时也不会自动重定向到&lt;code&gt;https://lbgitjp.github.io/&lt;/code&gt;，此时的&lt;code&gt;CNAME&lt;/code&gt;设置和没有设置效果一样。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

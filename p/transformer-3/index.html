@@ -1,0 +1,314 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="这篇文章旨在介绍现代LLM 的位置编码标准——RoPE (Rotary Positional Embeddings)。"><title>RoPE(旋转位置编码)</title><link rel=canonical href=https://lbgitjp.github.io/blog/p/transformer-3/><link rel=stylesheet href=/blog/scss/style.min.833d6eed45de56f48306bf57268d5b8cdfc8a60e8e7bdc99810464fcd033f7c6.css><meta property='og:title' content="RoPE(旋转位置编码)"><meta property='og:description' content="这篇文章旨在介绍现代LLM 的位置编码标准——RoPE (Rotary Positional Embeddings)。"><meta property='og:url' content='https://lbgitjp.github.io/blog/p/transformer-3/'><meta property='og:site_name' content='Hugo Theme Stack Starter'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='大语言模型'><meta property='article:tag' content='LLM'><meta property='article:tag' content='RoPE'><meta property='article:published_time' content='2026-01-19T00:00:00+00:00'><meta property='article:modified_time' content='2026-01-19T00:00:00+00:00'><meta name=twitter:title content="RoPE(旋转位置编码)"><meta name=twitter:description content="这篇文章旨在介绍现代LLM 的位置编码标准——RoPE (Rotary Positional Embeddings)。"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/blog/><img src=/blog/img/avatar_hu_12316f02ad07fe88.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/blog>Hugo Theme Stack Starter</a></h1><h2 class=site-description>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2></div></header><ol class=menu-social><li><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com target=_blank title=Twitter rel=me><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/blog/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/blog/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/blog/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/blog/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#1-核心数学从-2d-到-nd>1. 核心数学：从 2D 到 ND</a><ol><li><a href=#11-直观理解二维平面上的旋转>1.1 直观理解：二维平面上的旋转</a></li><li><a href=#12-相对位置的魔法-为什么旋转能带来相对位置>1.2 相对位置的魔法, 为什么旋转能带来“相对位置”？</a></li><li><a href=#13-角度计算公式为什么是-base-2id>1.3 角度计算公式：为什么是 $base^{-2i/d}$？</a></li></ol></li><li><a href=#2-生产环境的工程优化half-split-模式>2. 生产环境的工程优化：Half-Split 模式</a><ol><li><a href=#21-定义组件>2.1. 定义组件</a></li><li><a href=#22-定义-rotate_half-操作>2.2. 定义 rotate_half 操作</a></li><li><a href=#23-最终的全局向量公式>2.3. 最终的全局向量公式</a></li><li><a href=#24-拆解验证看看每一半发生了什么>2.4. 拆解验证（看看每一半发生了什么）</a></li><li><a href=#总结>总结</a></li></ol></li><li><a href=#3-代码实现-pytorch>3. 代码实现 (PyTorch)</a><ol><li><a href=#总结-1>总结</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/blog/categories/transformer/>Transformer</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/blog/p/transformer-3/>RoPE(旋转位置编码)</a></h2><h3 class=article-subtitle>这篇文章旨在介绍现代LLM 的位置编码标准——RoPE (Rotary Positional Embeddings)。</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-01-19T00:00:00Z>Jan 19, 2026</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>6 minute read</time></div></footer></div></header><section class=article-content><h1 id=深度解构现代-llm-的位置编码标准--rope-rotary-positional-embeddings>深度解构：现代 LLM 的位置编码标准 —— RoPE (Rotary Positional Embeddings)</h1><p>在 Transformer 架构的进化史中，位置编码经历了从 <strong>绝对位置相加 (Sinusoidal/Learnable)</strong> 到 <strong>相对位置偏置 (ALiBi)</strong> 的演变。而最终统治当前大模型（Llama 3, GPT-4, PaLM）的是 <strong>RoPE (旋转位置编码)</strong>。</p><p>RoPE 的核心洞见在于：<strong>通过将向量在每一个维度对中进行旋转，使得两个向量的点积仅取决于它们的相对距离，而非绝对位置。</strong></p><p>本文将揭示其在生产环境中的真实实现形态。</p><hr><h2 id=1-核心数学从-2d-到-nd>1. 核心数学：从 2D 到 ND</h2><h3 id=11-直观理解二维平面上的旋转>1.1 直观理解：二维平面上的旋转</h3><p>在二维平面上，将向量 $\mathbf{x}$ 旋转 $\theta$ 角度的线性变换为：</p>$$
+\begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}
+$$<p>为了理解 RoPE，我们先只看一个 <strong>二维向量</strong> $(x_1, x_2)$。</p><p>假设这个向量出现在序列的第 $m$ 个位置。
+RoPE 的做法是：<strong>把这个向量在二维平面上逆时针旋转 $m \cdot \theta$ 角度。</strong></p><p>在线性代数中，旋转一个向量是由<strong>旋转矩阵</strong>完成的：</p>$$
+\mathbf{R}_{\theta, m} \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} =
+\begin{pmatrix}
+\cos(m\theta) & -\sin(m\theta) \\
+\sin(m\theta) & \cos(m\theta)
+\end{pmatrix}
+\begin{pmatrix} x_1 \\ x_2 \end{pmatrix}
+$$<p>展开计算后，新的向量 $(x&rsquo;_1, x&rsquo;_2)$ 变成：</p>$$
+\begin{aligned}
+x'_1 &= x_1 \cos(m\theta) - x_2 \sin(m\theta) \\
+x'_2 &= x_1 \sin(m\theta) + x_2 \cos(m\theta)
+\end{aligned}
+$$<p>这就是 RoPE 的基本原子操作。</p><h3 id=12-相对位置的魔法-为什么旋转能带来相对位置>1.2 相对位置的魔法, 为什么旋转能带来“相对位置”？</h3><p>假设 Query 向量在位置 $m$，Key 向量在位置 $n$。
+RoPE 将它们分别旋转 $m\theta$ 和 $n\theta$。
+当计算 Attention Score ($Q \cdot K^T$) 时，根据复数运算法则（或三角恒等式）：</p>$$
+\text{Score} \propto \text{Real}( (q e^{im\theta}) \cdot (k e^{in\theta})^* ) = \text{Real}( q k^* e^{i(m-n)\theta} )
+$$<p><strong>结果只包含 $(m-n)$，即相对位置。</strong> 这赋予了模型极强的长文本外推能力（Extrapolation）。</p><p>我们来看看 Attention 的核心操作——<strong>点积 (Dot Product)</strong>。</p><p>假设：</p><ul><li><strong>Query ($q$)</strong> 在位置 $m$，旋转了 $m\theta$。</li><li><strong>Key ($k$)</strong> 在位置 $n$，旋转了 $n\theta$。</li></ul><p>它们的点积计算如下（利用复数或三角恒等式）：</p>$$
+\langle f(q, m), f(k, n) \rangle = \text{Real}( (q e^{im\theta}) \cdot (k e^{in\theta})^* )
+$$<p></p>$$
+= q^T \mathbf{R}_m^T \mathbf{R}_n k
+$$<p>根据旋转矩阵的性质：<strong>先旋转 $n$ 度，再反向旋转 $m$ 度（转置即逆旋转），等于旋转了 $n-m$ 度。</strong></p>$$
+\mathbf{R}_m^T \mathbf{R}_n = \mathbf{R}_{n-m}
+$$<p>所以，点积的结果只与 $(n-m)$ 有关：</p>$$
+\text{Attention Score} \propto \cos((n-m)\theta)
+$$<p><strong>结论</strong>：虽然我们给 $q$ 和 $k$ 注入的是<strong>绝对位置</strong> ($m$ 和 $n$)，但在做注意力运算时，模型感知到的完全是<strong>相对距离</strong> ($n-m$)。这使得模型具有极强的外推能力（比如训练时只见过长度 2000，推理时能处理 4000）。</p><h3 id=13-角度计算公式为什么是-base-2id>1.3 角度计算公式：为什么是 $base^{-2i/d}$？</h3><p>RoPE 的目标是给每一个维度赋予一个<strong>旋转频率（角速度）</strong>。</p><ul><li><strong>设计原则</strong>：借鉴傅里叶变换或原始 Transformer 的正弦编码，我们希望：<ul><li><strong>低维度（$i=0$）</strong>：转得快（高频），捕捉短距离关系。</li><li><strong>高维度（$i=d/2$）</strong>：转得慢（低频），捕捉长距离关系。</li></ul></li></ul><p><strong>公式定义</strong>：
+对于第 $i$ 组（$i \in [0, d/2)$），其旋转频率 $\theta_i$ 为：</p>$$ \theta_i = \text{base}^{-2i / d} $$<ul><li><strong>当 $i=0$ (第一个维度)</strong>:
+$$ \theta_0 = \text{base}^{-0/d} = \text{base}^0 = 1 $$
+这意味着位置每增加 1，它旋转 1 弧度。这是<strong>最高频</strong>。</li><li><strong>当 $i \to d/2$ (最后一个维度)</strong>:
+$$ \theta \to \text{base}^{-1} = 1/\text{base} $$
+如果 base=10000，则位置每增加 1，它只旋转 1/10000 弧度。这是<strong>最低频</strong>。</li></ul><hr><h2 id=2-生产环境的工程优化half-split-模式>2. 生产环境的工程优化：Half-Split 模式</h2><p>这是教科书与 PyTorch 源码最大的区别。</p><ul><li><strong>理论上的 RoPE</strong>: 将向量相邻元素两两分组 $(x_0, x_1), (x_2, x_3)&mldr;$ 进行旋转。</li><li><strong>实际的 RoPE (Llama/HuggingFace)</strong>: 采用 <strong>Half-Split</strong> 策略。
+将向量一分为二，让 $x_i$ 与 $x_{i + D/2}$ 配对。</li></ul><p><strong>为什么？</strong>
+为了 <strong>GPU 访存效率</strong>。在显存中连续读取一块数据（<code>chunk</code>）远比跨步读取（<code>strided slice</code> 如 <code>x[::2]</code>）要快得多。</p><p>对应的数学操作变化：</p>$$
+\text{rotate\_half}(\mathbf{x}) = \text{cat}(-\mathbf{x}_{后半}, \mathbf{x}_{前半})
+$$<p>配合的频率表 $\cos, \sin$ 也需要构造为：$[\cos\theta, \cos\theta]$ 的形式。</p><p>下面举例说明, 假设向量维度 $D=1024$。</p><h3 id=21-定义组件>2.1. 定义组件</h3><p>首先，我们将输入向量 $\mathbf{x}$ 一分为二：</p>$$
+\mathbf{x} = [\mathbf{x}_a, \mathbf{x}_b]
+$$<p>其中：</p><ul><li>$\mathbf{x}_a = \mathbf{x}[0 : 512]$ （前 512 维）</li><li>$\mathbf{x}_b = \mathbf{x}[512 : 1024]$ （后 512 维）</li></ul><p>接着，定义频率向量 $\boldsymbol{\theta}$（共 512 个角度）：</p>$$
+\boldsymbol{\theta} = [\theta_0, \theta_1, \dots, \theta_{511}]
+$$<p>为了进行向量化计算，我们需要构造<strong>全尺寸</strong>的 $\cos$ 和 $\sin$ 向量。根据代码逻辑，它们是<strong>重复拼接</strong>的：</p>$$
+\mathbf{C} = [\cos\boldsymbol{\theta}, \cos\boldsymbol{\theta}] \in \mathbb{R}^{1024}
+$$<p></p>$$
+\mathbf{S} = [\sin\boldsymbol{\theta}, \sin\boldsymbol{\theta}] \in \mathbb{R}^{1024}
+$$<h3 id=22-定义-rotate_half-操作>2.2. 定义 rotate_half 操作</h3><p><code>rotate_half(x)</code> 的操作是将后半部分变负并移到前面，将前半部分移到后面：</p>$$
+\text{rotate\_half}(\mathbf{x}) = [-\mathbf{x}_b, \mathbf{x}_a]
+$$<p>展开来看就是：</p>$$
+[-\mathbf{x}[512:1024], \quad \mathbf{x}[0:512]]
+$$<h3 id=23-最终的全局向量公式>2.3. 最终的全局向量公式</h3><p>现在，我们可以写出完整的 RoPE 向量计算公式。</p><p><strong>总公式：</strong></p>$$
+\text{RoPE}(\mathbf{x}) = \mathbf{x} \odot \mathbf{C} + \text{rotate\_half}(\mathbf{x}) \odot \mathbf{S}
+$$<hr><h3 id=24-拆解验证看看每一半发生了什么>2.4. 拆解验证（看看每一半发生了什么）</h3><p>把上面的公式代入 $\mathbf{x}_a$ 和 $\mathbf{x}_b$ 进行拆解，你会发现它完美对应了旋转逻辑：</p>$$
+\begin{aligned}
+\text{RoPE}(\mathbf{x}) &= [\mathbf{x}_a, \mathbf{x}_b] \odot [\cos\boldsymbol{\theta}, \cos\boldsymbol{\theta}] + [-\mathbf{x}_b, \mathbf{x}_a] \odot [\sin\boldsymbol{\theta}, \sin\boldsymbol{\theta}] \\
+&= \underbrace{[\mathbf{x}_a \odot \cos\boldsymbol{\theta}, \quad \mathbf{x}_b \odot \cos\boldsymbol{\theta}]}_{\text{第一项}} + \underbrace{[-\mathbf{x}_b \odot \sin\boldsymbol{\theta}, \quad \mathbf{x}_a \odot \sin\boldsymbol{\theta}]}_{\text{第二项}}
+\end{aligned}
+$$<p><strong>最后合并结果（按位置分块）：</strong></p><ul><li><p><strong>前半部分 (0~511)</strong>:</p>$$ \text{Result}_{前半} = \mathbf{x}_a \odot \cos\boldsymbol{\theta} - \mathbf{x}_b \odot \sin\boldsymbol{\theta} $$<p><em>(这正是旋转公式的实部：$x \cos - y \sin$)</em></p></li><li><p><strong>后半部分 (512~1023)</strong>:</p>$$ \text{Result}_{后半} = \mathbf{x}_b \odot \cos\boldsymbol{\theta} + \mathbf{x}_a \odot \sin\boldsymbol{\theta} $$<p><em>(这正是旋转公式的虚部：$y \cos + x \sin$)</em></p></li></ul><h3 id=总结>总结</h3><p>这就是现代 LLM 中 RoPE 的终极形态：<strong>利用向量拼接和翻转，一次性对 1024 维向量完成 512 组独立的 2D 旋转。</strong></p><h2 id=3-代码实现-pytorch>3. 代码实现 (PyTorch)</h2><p>主要分为两步：</p><ol><li><strong><code>calc_rope_params</code></strong>: 计算出 $\cos$ 和 $\sin$ 表（对应角度计算公式）。</li><li><strong><code>apply_rope</code></strong>: 执行旋转（对应旋转公式）。</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>torch</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>calc_rope_params</span><span class=p>(</span><span class=n>dim</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>seq_len</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>base</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>10000</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    第一步：计算 Cos 和 Sin 表
+</span></span></span><span class=line><span class=cl><span class=s2>    对应数学公式：theta_i = base ^ (-2i / dim)
+</span></span></span><span class=line><span class=cl><span class=s2>    
+</span></span></span><span class=line><span class=cl><span class=s2>    Args:
+</span></span></span><span class=line><span class=cl><span class=s2>        dim: Head Dimension (e.g., 64)
+</span></span></span><span class=line><span class=cl><span class=s2>        seq_len: 当前序列长度 (e.g., 10)
+</span></span></span><span class=line><span class=cl><span class=s2>        base: 旋转基数
+</span></span></span><span class=line><span class=cl><span class=s2>    Returns:
+</span></span></span><span class=line><span class=cl><span class=s2>        cos, sin: 形状为 [seq_len, dim]
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 1. 计算角速度 (Inverse Frequencies)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 生成偶数索引: [0, 2, 4, ..., dim-2] -&gt; Shape: [dim/2]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 对应公式中的 2i</span>
+</span></span><span class=line><span class=cl>    <span class=n>indices</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>arange</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>dim</span><span class=p>,</span> <span class=mi>2</span><span class=p>)</span><span class=o>.</span><span class=n>float</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 计算 theta = base ^ (-2i / d)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 这一步对应了上面数学部分的公式 1</span>
+</span></span><span class=line><span class=cl>    <span class=n>theta</span> <span class=o>=</span> <span class=mf>1.0</span> <span class=o>/</span> <span class=p>(</span><span class=n>base</span> <span class=o>**</span> <span class=p>(</span><span class=n>indices</span> <span class=o>/</span> <span class=n>dim</span><span class=p>))</span>  <span class=c1># Shape: [dim/2]</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 2. 计算每个位置的绝对旋转角度 (Position * Theta)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 生成位置序列: [0, 1, ..., seq_len-1] -&gt; Shape: [seq_len]</span>
+</span></span><span class=line><span class=cl>    <span class=n>pos_idx</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>arange</span><span class=p>(</span><span class=n>seq_len</span><span class=p>)</span><span class=o>.</span><span class=n>float</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 外积计算: pos * theta</span>
+</span></span><span class=line><span class=cl>    <span class=c1># idx[i, j] 表示第 i 个位置，第 j 组向量需要的旋转角度</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Shape: [seq_len, dim/2]</span>
+</span></span><span class=line><span class=cl>    <span class=n>idx_theta</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>outer</span><span class=p>(</span><span class=n>pos_idx</span><span class=p>,</span> <span class=n>theta</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 3. 拼接频率 (Half-Split 模式)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 我们需要构建 [cos(theta), cos(theta)] 的形式</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 这样前一半 dim 和 后一半 dim 使用相同的频率</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Shape: [seq_len, dim]</span>
+</span></span><span class=line><span class=cl>    <span class=n>freqs</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>cat</span><span class=p>((</span><span class=n>idx_theta</span><span class=p>,</span> <span class=n>idx_theta</span><span class=p>),</span> <span class=n>dim</span><span class=o>=-</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 计算 cos 和 sin</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>freqs</span><span class=o>.</span><span class=n>cos</span><span class=p>(),</span> <span class=n>freqs</span><span class=o>.</span><span class=n>sin</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>rotate_half</span><span class=p>(</span><span class=n>x</span><span class=p>:</span> <span class=n>torch</span><span class=o>.</span><span class=n>Tensor</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    核心辅助函数：实现 [-x2, x1] 的变换
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 将向量 x 从中间切开</span>
+</span></span><span class=line><span class=cl>    <span class=c1># x1 shape: [..., dim/2]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># x2 shape: [..., dim/2]</span>
+</span></span><span class=line><span class=cl>    <span class=n>x1</span><span class=p>,</span> <span class=n>x2</span> <span class=o>=</span> <span class=n>x</span><span class=o>.</span><span class=n>chunk</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=n>dim</span><span class=o>=-</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 拼按接为 [-x2, x1]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Shape: [..., dim]</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>torch</span><span class=o>.</span><span class=n>cat</span><span class=p>((</span><span class=o>-</span><span class=n>x2</span><span class=p>,</span> <span class=n>x1</span><span class=p>),</span> <span class=n>dim</span><span class=o>=-</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>apply_rope</span><span class=p>(</span><span class=n>x</span><span class=p>:</span> <span class=n>torch</span><span class=o>.</span><span class=n>Tensor</span><span class=p>,</span> <span class=n>cos</span><span class=p>:</span> <span class=n>torch</span><span class=o>.</span><span class=n>Tensor</span><span class=p>,</span> <span class=n>sin</span><span class=p>:</span> <span class=n>torch</span><span class=o>.</span><span class=n>Tensor</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>    第二步：执行旋转
+</span></span></span><span class=line><span class=cl><span class=s2>    对应数学公式：x&#39; = x*cos - y*sin
+</span></span></span><span class=line><span class=cl><span class=s2>    
+</span></span></span><span class=line><span class=cl><span class=s2>    Args:
+</span></span></span><span class=line><span class=cl><span class=s2>        x: 输入 Query 或 Key, Shape [B, H, L, D]
+</span></span></span><span class=line><span class=cl><span class=s2>        cos: 预计算好的余弦表, Shape [L, D] (需要广播)
+</span></span></span><span class=line><span class=cl><span class=s2>        sin: 预计算好的正弦表, Shape [L, D] (需要广播)
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 1. 调整 cos/sin 形状以支持广播</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 输入 cos: [L, D] -&gt; 变成 [1, 1, L, D]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 这样它可以自动适配 Batch(B) 和 Heads(H)</span>
+</span></span><span class=line><span class=cl>    <span class=n>cos</span> <span class=o>=</span> <span class=n>cos</span><span class=p>[</span><span class=kc>None</span><span class=p>,</span> <span class=kc>None</span><span class=p>,</span> <span class=p>:,</span> <span class=p>:]</span>
+</span></span><span class=line><span class=cl>    <span class=n>sin</span> <span class=o>=</span> <span class=n>sin</span><span class=p>[</span><span class=kc>None</span><span class=p>,</span> <span class=kc>None</span><span class=p>,</span> <span class=p>:,</span> <span class=p>:]</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 2. 核心旋转公式 (Core Formula)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># -------------------------------------------------------------</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 这一步完全对应上面数学部分的公式 2</span>
+</span></span><span class=line><span class=cl>    <span class=c1># x * cos           -&gt; [x1*cos, x2*cos]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># rotate_half(x)    -&gt; [-x2,    x1]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># ... * sin         -&gt; [-x2*sin, x1*sin]</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 相加               -&gt; [x1*cos - x2*sin, x2*cos + x1*sin]</span>
+</span></span><span class=line><span class=cl>    <span class=c1>#</span>
+</span></span><span class=line><span class=cl>    <span class=c1># Shape 变化: [B, H, L, D] (始终保持不变)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=p>(</span><span class=n>x</span> <span class=o>*</span> <span class=n>cos</span><span class=p>)</span> <span class=o>+</span> <span class=p>(</span><span class=n>rotate_half</span><span class=p>(</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=n>sin</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># ==========================================</span>
+</span></span><span class=line><span class=cl><span class=c1># 极简运行示例</span>
+</span></span><span class=line><span class=cl><span class=c1># ==========================================</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=vm>__name__</span> <span class=o>==</span> <span class=s2>&#34;__main__&#34;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 配置</span>
+</span></span><span class=line><span class=cl>    <span class=n>dim</span> <span class=o>=</span> <span class=mi>8</span>        <span class=c1># 假设维度为 8</span>
+</span></span><span class=line><span class=cl>    <span class=n>seq_len</span> <span class=o>=</span> <span class=mi>3</span>    <span class=c1># 假设序列长度为 3</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 1. 计算参数</span>
+</span></span><span class=line><span class=cl>    <span class=c1># cos, sin shape: [3, 8]</span>
+</span></span><span class=line><span class=cl>    <span class=n>cos</span><span class=p>,</span> <span class=n>sin</span> <span class=o>=</span> <span class=n>calc_rope_params</span><span class=p>(</span><span class=n>dim</span><span class=p>,</span> <span class=n>seq_len</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 2. 模拟输入 x</span>
+</span></span><span class=line><span class=cl>    <span class=c1># [Batch=1, Heads=1, L=3, D=8]</span>
+</span></span><span class=line><span class=cl>    <span class=n>x</span> <span class=o>=</span> <span class=n>torch</span><span class=o>.</span><span class=n>randn</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=n>seq_len</span><span class=p>,</span> <span class=n>dim</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 3. 应用 RoPE</span>
+</span></span><span class=line><span class=cl>    <span class=n>x_rotated</span> <span class=o>=</span> <span class=n>apply_rope</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>cos</span><span class=p>,</span> <span class=n>sin</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Input shape: </span><span class=si>{</span><span class=n>x</span><span class=o>.</span><span class=n>shape</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Cos shape:   </span><span class=si>{</span><span class=n>cos</span><span class=o>.</span><span class=n>shape</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Output shape:</span><span class=si>{</span><span class=n>x_rotated</span><span class=o>.</span><span class=n>shape</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 验证第一个位置 (pos=0) 是否没有旋转 (cos=1, sin=0)</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 因为 pos=0 时，旋转角度为 0</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 所以 x_rotated[0,0,0] 应该等于 x[0,0,0]</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>Pos 0 difference: </span><span class=si>{</span><span class=p>(</span><span class=n>x_rotated</span><span class=p>[:,:,</span><span class=mi>0</span><span class=p>,:]</span> <span class=o>-</span> <span class=n>x</span><span class=p>[:,:,</span><span class=mi>0</span><span class=p>,:])</span><span class=o>.</span><span class=n>abs</span><span class=p>()</span><span class=o>.</span><span class=n>sum</span><span class=p>()</span><span class=o>.</span><span class=n>item</span><span class=p>()</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=总结-1>总结</h3><ol><li><strong>关于公式</strong>：<code>base^(-2i/d)</code> 保证了不同维度有从快到慢的旋转速度。</li><li><strong>关于计算</strong>：<code>(x * cos) + (rotate_half(x) * sin)</code> 是一种利用向量加减乘法来**模拟复数旋转（矩阵乘法）**的高效数学技巧。</li><li><strong>关于代码</strong>：上面的代码展示了 RoPE 最本质的逻辑。实际 Llama 模型中只是把 <code>calc_rope_params</code> 的结果缓存了起来，计算逻辑完全一致。</li></ol></section><footer class=article-footer><section class=article-tags><a href=/blog/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/>大语言模型</a>
+<a href=/blog/tags/llm/>LLM</a>
+<a href=/blog/tags/rope/>RoPE</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})})</script></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/blog/p/transformer-2/><div class=article-details><h2 class=article-title>Transformer/GPT架构背后的数学原理</h2></div></a></article><article><a href=/blog/p/transformer-1/><div class=article-details><h2 class=article-title>注意力可视化 (Attention Visualization)的工具或方法</h2></div></a></article><article><a href=/blog/p/prompt-engineering-1/><div class=article-details><h2 class=article-title>如何判断提示词是否有效?</h2></div></a></article><article><a href=/blog/p/dl-03/><div class=article-details><h2 class=article-title>深度学习中的梯度通用公式</h2></div></a></article><article><a href=/blog/p/dl-02/><div class=article-details><h2 class=article-title>理解深度学习中的梯度下降和反向传播</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 Hugo Theme Stack Starter</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/blog/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

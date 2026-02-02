@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>提示词 on Hugo Theme Stack Starter</title><link>https://lbgitjp.github.io/blog/tags/%E6%8F%90%E7%A4%BA%E8%AF%8D/</link><description>Recent content in 提示词 on Hugo Theme Stack Starter</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 10 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lbgitjp.github.io/blog/tags/%E6%8F%90%E7%A4%BA%E8%AF%8D/index.xml" rel="self" type="application/rss+xml"/><item><title>如何判断提示词是否有效?</title><link>https://lbgitjp.github.io/blog/p/prompt-engineering-1/</link><pubDate>Sat, 10 Jan 2026 00:00:00 +0000</pubDate><guid>https://lbgitjp.github.io/blog/p/prompt-engineering-1/</guid><description>&lt;p&gt;这是一个困扰着从初学者到顶尖 AI 工程师的共同难题。由于 LLM 是一个**“黑盒”概率模型**，而不是一个逻辑确定的程序，我们无法像调试代码一样通过“断点”来看哪一行提示词起了作用。&lt;/p&gt;
+&lt;p&gt;但我们有一套系统化的方法论（Prompt Engineering Methodology）来解决这个问题，从**“玄学”&lt;strong&gt;走向&lt;/strong&gt;“科学”**。&lt;/p&gt;
+&lt;p&gt;以下是具体的解决步骤和技巧：&lt;/p&gt;
+&lt;h3 id="一-镜像法让-ai-告诉你它听懂了什么"&gt;一、 “镜像法”：让 AI 告诉你它听懂了什么
+&lt;/h3&gt;&lt;p&gt;这是最快验证提示词是否有效的办法。不要直接看结果，而是要求 AI &lt;strong&gt;复述或解释你的指令&lt;/strong&gt;。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;让 AI 解释它的理解&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在提示词末尾加上：“在执行任务之前，请先用简练的语言解释你对上述任务目标的理解，并列出你需要遵守的关键限制。”&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：如果 AI 总结出来的重点和你想要的不一样，那就说明你的那些提示词是无效的或有歧义的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;让 AI 优化提示词（Meta-Prompting）&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;把你的提示词发给 AI，然后问：“我想达成 X 目的，这是我写的提示词。请你从 AI 的角度分析，这句提示词哪里不清晰？有哪些部分是多余的？请帮我重写一个更高效的版本。”&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;原理&lt;/strong&gt;：模型最清楚什么样的语言结构最容易触发它的注意力机制。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="二-控制变量法ab-测试"&gt;二、 “控制变量法”：A/B 测试
+&lt;/h3&gt;&lt;p&gt;如果你觉得一段提示词里有很多废话，但不敢删，就用科学实验的方法。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;剥洋葱法&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;基准测试&lt;/strong&gt;：先跑一次完整提示词，保存结果。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;删减测试&lt;/strong&gt;：删掉你觉得无效的那句话（比如“请你扮演一个聪明的助手”），再跑一次。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;对比&lt;/strong&gt;：如果结果质量没有明显下降，那句话就是无效的噪音。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;注意&lt;/strong&gt;：由于 LLM 有随机性，最好将 &lt;code&gt;Temperature&lt;/code&gt; 设置为 0（如果可以设置），或者在相同设置下多跑几次取平均表现。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;位置测试（Recency Bias）&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LLM 对&lt;strong&gt;开头&lt;/strong&gt;和&lt;strong&gt;结尾&lt;/strong&gt;的信息关注度最高，中间的信息容易被“遗忘”（Lost in the Middle 现象）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;验证&lt;/strong&gt;：把你认为最重要的指令移动到提示词的&lt;strong&gt;最末尾&lt;/strong&gt;。如果结果突然变好了，说明这句话本身是有效的，只是之前放的位置不好（权重被稀释了）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="三-示例法few-shot-prompting少样本提示"&gt;三、 “示例法”：Few-Shot Prompting（少样本提示）
+&lt;/h3&gt;&lt;p&gt;这是验证提示词意图最强效的手段。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;问题&lt;/strong&gt;：你说“风格要幽默”，这个词很模糊，你觉得无效，是因为 AI 的“幽默”和你的“幽默”定义不同。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;解决&lt;/strong&gt;：不要只给指令，给&lt;strong&gt;例子&lt;/strong&gt;。
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;无效尝试&lt;/em&gt;：“写个笑话。” -&amp;gt; AI 生成烂梗。&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;有效尝试&lt;/em&gt;：“模仿下列例子的风格写个笑话。例子：……”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;判断标准&lt;/strong&gt;：如果加上例子后，输出风格立刻对齐了，说明之前的纯文字描述是低效的，&lt;strong&gt;例子（Sample）才是最高效的 Token。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="四-高级技巧观察概率logprobs与注意力"&gt;四、 高级技巧：观察概率（Logprobs）与注意力
+&lt;/h3&gt;&lt;p&gt;如果你是开发者或使用 API，有更硬核的办法：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查看 Logprobs (对数概率)&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当你要求模型输出特定格式（比如 JSON）时，如果模型输出 &lt;code&gt;{&lt;/code&gt; 的概率非常高（比如 99%），说明前面的指令非常有效。如果概率很低，说明模型很犹豫，前面的指令没有给足“确信度”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;注意力可视化 (Attention Visualization)&lt;/strong&gt;（需要特定工具支持）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;虽然普通用户看不到，但理论上可以观察模型在生成答案时，&lt;strong&gt;注意力聚焦在 Prompt 的哪一部分&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;经验法则&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;具体的名词和动词&lt;/strong&gt;（&amp;ldquo;Python代码&amp;rdquo;、&amp;ldquo;递归函数&amp;rdquo;）权重极高。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;抽象的形容词&lt;/strong&gt;（&amp;ldquo;好用的&amp;rdquo;、&amp;ldquo;优雅的&amp;rdquo;）权重通常较低，甚至被忽略。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;否定句&lt;/strong&gt;（&amp;ldquo;不要使用 for 循环&amp;rdquo;）往往不如肯定句（&amp;ldquo;请使用 while 循环&amp;rdquo;）有效。模型经常忽略“不”字。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="五-建立评估集-evaluation-set"&gt;五、 建立“评估集” (Evaluation Set)
+&lt;/h3&gt;&lt;p&gt;不要凭感觉，要凭数据。这是大模型开发的核心心法。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;准备 5-10 个典型的测试问题（不是 1 个）。&lt;/li&gt;
+&lt;li&gt;当你修改提示词时，让 AI 把这 10 个问题都跑一遍。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;人工打分&lt;/strong&gt;：如果 10 个问题里有 8 个变好了，说明这个提示词修改是有效的。如果是 5 好 5 坏，说明这个修改是不稳定的。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="总结如何写出有效的提示词"&gt;总结：如何写出“有效”的提示词？
+&lt;/h3&gt;&lt;p&gt;根据目前的最佳实践，有效的提示词通常符合 &lt;strong&gt;CO-STAR 原则&lt;/strong&gt;，如果你按照这个结构写，废话会最少，有效性最高：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;C (Context)&lt;/strong&gt;：背景（我是谁，你是谁）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;O (Objective)&lt;/strong&gt;：具体任务（只要动词和名词）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;S (Style)&lt;/strong&gt;：风格（最好给参考作者或例子）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;T (Tone)&lt;/strong&gt;：语气（正式、幽默）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;A (Audience)&lt;/strong&gt;：受众（给小学生看，还是给博士看）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;R (Response)&lt;/strong&gt;：输出格式（Markdown, JSON, 代码块）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;一句话建议&lt;/strong&gt;：
+如果你不确定一句话有没有用，&lt;strong&gt;把它删了&lt;/strong&gt;。如果任务没崩，它就是废话；如果任务崩了，它就是核心。通过不断的**“做减法”**，你留下的就是最纯粹、最有效的 Token。&lt;/p&gt;</description></item></channel></rss>

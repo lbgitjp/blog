@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitHub Actions on Hugo Theme Stack Starter</title><link>https://lbgitjp.github.io/blog/tags/github-actions/</link><description>Recent content in GitHub Actions on Hugo Theme Stack Starter</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 07 Jan 2026 06:00:00 +0000</lastBuildDate><atom:link href="https://lbgitjp.github.io/blog/tags/github-actions/index.xml" rel="self" type="application/rss+xml"/><item><title>建设博客站点 - 5. 使用GitHub Actions工作流自动部署站点</title><link>https://lbgitjp.github.io/blog/p/build-blog-5/</link><pubDate>Wed, 07 Jan 2026 06:00:00 +0000</pubDate><guid>https://lbgitjp.github.io/blog/p/build-blog-5/</guid><description>&lt;h2 id="1-当前部署问题"&gt;1. 当前部署问题
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;当前的&lt;code&gt;blog&lt;/code&gt;库有两个分支的&lt;code&gt;main&lt;/code&gt;和&lt;code&gt;gh-pages&lt;/code&gt;，其中&lt;code&gt;main&lt;/code&gt;中存放的是&lt;code&gt;hugo&lt;/code&gt;站点，是源库，&lt;code&gt;gh-pages&lt;/code&gt;中存放的是&lt;code&gt;hugo&lt;/code&gt;生成的静态站点，是目标库。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;现在每次发布文章后要经过如下几步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;进入&lt;code&gt;main&lt;/code&gt;分支，&lt;code&gt;commit&lt;/code&gt;到本地&lt;code&gt;git&lt;/code&gt;库，&lt;code&gt;push&lt;/code&gt;到&lt;code&gt;Github&lt;/code&gt;服务器端的&lt;code&gt;main&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行&lt;code&gt;hugo&lt;/code&gt;命令生成的静态站点到&lt;code&gt;public&lt;/code&gt;目录。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;进入&lt;code&gt;gh-pages&lt;/code&gt;分支，将&lt;code&gt;main&lt;/code&gt;分支的&lt;code&gt;public&lt;/code&gt;目录内容覆盖到&lt;code&gt;gh-pages&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;commit&lt;/code&gt;到本地&lt;code&gt;git&lt;/code&gt;库，&lt;code&gt;push&lt;/code&gt;到&lt;code&gt;Github&lt;/code&gt;服务器端的&lt;code&gt;gh-pages&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可以看到，上面的步骤手工处理起来还是有些复杂，但通过&lt;code&gt;GitHub Actions&lt;/code&gt;的工作流机制可以减少复杂度。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="2-使用github-actions工作流"&gt;2. 使用GitHub Actions工作流
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;进入到&lt;code&gt;main&lt;/code&gt;分支，创建&lt;code&gt;.github\workflows\&lt;/code&gt;目录。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;进入到&lt;code&gt;.github\workflows\&lt;/code&gt;目录下，创建工作流文件&lt;code&gt;deploy.yml&lt;/code&gt;，其内容如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# 参考: https://github.com/peaceiris/actions-gh-pages
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;name: Build and Deploy Hugo Site
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;on:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; push:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; branches:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - main # 当push到main分支时触发
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;jobs:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; deploy:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; runs-on: ubuntu-latest
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; permissions:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; contents: write # 添加此行以授予写入权限，未加此行时会出错
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; steps:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - name: Checkout repository
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; uses: actions/checkout@v6
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; with:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; submodules: true # 如果您的主题使用子模块，请启用
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - name: Setup Hugo
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; uses: peaceiris/actions-hugo@v3
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; with:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; hugo-version: &amp;#39;latest&amp;#39; # 或指定版本，如&amp;#39;0.154.2&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; extended: true # 如果使用Hugo扩展版
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - name: Build site
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; run: hugo --minify # 构建静态文件到public文件夹
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; - name: Deploy to gh-pages
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; uses: peaceiris/actions-gh-pages@v4
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; with:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; github_token: ${{ secrets.GITHUB_TOKEN }} # 使用内置令牌
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; publish_dir: ./public # 源目录
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; publish_branch: gh-pages # 目标分支
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; force_orphan: true # 强制目标分支gh-pages为孤立分支，仅保留一个提交
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;commit&lt;/code&gt;到本地&lt;code&gt;git&lt;/code&gt;库，并&lt;code&gt;push&lt;/code&gt;到&lt;code&gt;Github&lt;/code&gt;服务器端的&lt;code&gt;main&lt;/code&gt;分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;现在&lt;code&gt;GitHub Actions&lt;/code&gt;工作流就可以自动运行了，以后每次发布文章后只需经过如下1个步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;进入&lt;code&gt;main&lt;/code&gt;分支，&lt;code&gt;commit&lt;/code&gt;到本地&lt;code&gt;git&lt;/code&gt;库，&lt;code&gt;push&lt;/code&gt;到&lt;code&gt;Github&lt;/code&gt;服务器端的&lt;code&gt;main&lt;/code&gt;分支。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;现在发布一篇文章后，只需将&lt;code&gt;main&lt;/code&gt;分支修改提交到&lt;code&gt;Github&lt;/code&gt;服务器端的&lt;code&gt;main&lt;/code&gt;分支，然后等待Github库的&lt;a class="link" href="https://github.com/lbgitjp/blog/actions" title="actions"
+target="_blank" rel="noopener"
+&gt;actions&lt;/a&gt;工作流完成即可查看部署好的站点，与使用工作流之前相比，大幅减少了复杂度。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="3-注意事项"&gt;3. 注意事项
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;使用使用GitHub Actions工作流后我们不应手工修改&lt;code&gt;gh-pages&lt;/code&gt;分支中的内容，其中所有内容都应由&lt;code&gt;main&lt;/code&gt;分支生成，例如：在&lt;a class="link" href="../build-blog-4" title="建设博客站点 - 4. 设置域名"
+&gt;建设博客站点 - 4. 设置域名&lt;/a&gt;中在&lt;code&gt;gh-pages&lt;/code&gt;分支添加一个文件名为&lt;code&gt;CNAME&lt;/code&gt;的文件，该文件现在应该放到&lt;code&gt;main&lt;/code&gt;分支的&lt;code&gt;static/&lt;/code&gt;目录下，即应位于&lt;code&gt;static/CNAME&lt;/code&gt;。该目录专门用于存放静态资产（如图像、CSS文件或验证文件），&lt;code&gt;Hugo&lt;/code&gt;在运行构建命令（如&lt;code&gt;hugo --minify&lt;/code&gt;）时，会自动将&lt;code&gt;static/&lt;/code&gt;中的内容直接复制到输出目录（默认为&lt;code&gt;public/&lt;/code&gt;）的根目录中。&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

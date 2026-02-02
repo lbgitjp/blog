@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hugo on Hugo Theme Stack Starter</title><link>https://lbgitjp.github.io/blog/tags/hugo/</link><description>Recent content in Hugo on Hugo Theme Stack Starter</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 05 Jan 2026 04:00:00 +0000</lastBuildDate><atom:link href="https://lbgitjp.github.io/blog/tags/hugo/index.xml" rel="self" type="application/rss+xml"/><item><title>建设博客站点 - 1. 在本地使用Hugo创建站点</title><link>https://lbgitjp.github.io/blog/p/build-blog-1/</link><pubDate>Mon, 05 Jan 2026 04:00:00 +0000</pubDate><guid>https://lbgitjp.github.io/blog/p/build-blog-1/</guid><description>&lt;h2 id="1-安装hugo"&gt;1. 安装Hugo
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;从Hugo&lt;a class="link" href="https://github.com/gohugoio/hugo/releases" title="下载地址"
+target="_blank" rel="noopener"
+&gt;下载地址&lt;/a&gt;下载平台相关的Hugo安装包，
+本次使用的是&lt;a class="link" href="https://github.com/gohugoio/hugo/releases/download/v0.154.2/hugo_extended_withdeploy_0.154.2_windows-amd64.zip" title="hugo_extended_withdeploy_0.154.2_windows-amd64.zip"
+target="_blank" rel="noopener"
+&gt;hugo_extended_withdeploy_0.154.2_windows-amd64.zip&lt;/a&gt;，
+为了避免后续出现问题, 推荐使用extened版本的安装包。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;将安装波解压到安装目录，比如c:\hugo，然后将该目录添加到系统环境变量PATH中，如果不添加环境变量，需要在每次运行hugo命令前手工设置PATH变量, &lt;code&gt;set PATH=%PATH%;c:\hugo&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;打开命令行，输入hugo version，显示版本号即为安装成功
+&lt;code&gt;hugo v0.154.2-f66d0944461bf32c4e69588bc3e093f14e4e149d+extended+withdeploy windows/amd64 BuildDate=2026-01-02T16:08:44Z VendorInfo=gohugoio&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="2-创建站点"&gt;2. 创建站点
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;打开命令行，运行&lt;code&gt;hugo new site blog&lt;/code&gt;，生成了新的骨架站点&lt;code&gt;blog&lt;/code&gt;，这个目录内有很多空目录和一个hugo配置文件&lt;code&gt;hugo.toml&lt;/code&gt;，其中最常用的是&lt;code&gt;content&lt;/code&gt;目录，所有的文章都是放在该目录下，&lt;code&gt;themes&lt;/code&gt;目录，&lt;code&gt;static&lt;/code&gt;目录和hugo配置文件&lt;code&gt;hugo.toml&lt;/code&gt;等在本教程的后续文章中也会涉及到，&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行&lt;code&gt;cd blog&lt;/code&gt;进入该站点目录，然后运行&lt;code&gt;hugo server&lt;/code&gt;，就启动了站点&lt;code&gt;http://localhost:1313/&lt;/code&gt;，在浏览器中打开该站点会显示&lt;code&gt;Page Not Found&lt;/code&gt;，因为目前还只是一个空站点，没有任何内容。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;查找主题，从hugo&lt;a class="link" href="https://themes.gohugo.io/" title="主题站点"
+target="_blank" rel="noopener"
+&gt;主题站点&lt;/a&gt;查找合适的主题，本次使用的是&lt;code&gt;ananke&lt;/code&gt;主题https://themes.gohugo.io/themes/gohugo-theme-ananke/。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;下载主题，运行&lt;code&gt;git init&lt;/code&gt;，在该站点内初始化一个空的git库，然后运行&lt;code&gt;git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke&lt;/code&gt;，将&lt;code&gt;ananke&lt;/code&gt;主题库下载到&lt;code&gt;themes&lt;/code&gt;目录下.
+&lt;strong&gt;注意&lt;/strong&gt;: 该步不是必须使用&lt;code&gt;git&lt;/code&gt;的，可以直接将&lt;code&gt;ananke&lt;/code&gt;主题下载后解压到&lt;code&gt;themes&lt;/code&gt;目录下也是可以的.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;修改配置文件&lt;code&gt;hugo.toml&lt;/code&gt;，在其中添加一行&lt;code&gt;theme = 'ananke'&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行&lt;code&gt;hugo server&lt;/code&gt;，启动站点&lt;code&gt;http://localhost:1313/&lt;/code&gt;，就会发现站点已经正常运行&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;检查&lt;code&gt;blog&lt;/code&gt;目录, 发现其中新增加了一个&lt;code&gt;public&lt;/code&gt;子目录，该目录是hugo在运行时自动生成的静态站点。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行&lt;code&gt;hugo new content content/posts/hello-world.md&lt;/code&gt;命令添加一篇新帖子, 生成的&lt;code&gt;hello-world.md&lt;/code&gt;是一个Markdown格式的文件, 用户可以使用支持该格式的编辑器来进行编辑，其格式如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;title: &amp;#34;Hello World&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;date: 2026-01-05T14:20:53+08:00
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;tags: []
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;featured_image: &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;description: &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行&lt;code&gt;hugo server&lt;/code&gt;，启动站点&lt;code&gt;http://localhost:1313/&lt;/code&gt;，就会发现新发的帖子已经正常显示，现在就基本上可以将&lt;code&gt;public&lt;/code&gt;子目录中的内容发布到托管站点了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在发布前还需要对hugo配置文件&lt;code&gt;hugo.toml&lt;/code&gt;进行配置, 将其中的&lt;code&gt;baseURL&lt;/code&gt;设置为服务器站点的网址：
+&lt;code&gt;baseURL = &amp;quot;https://yoursite.com/&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;现在运行&lt;code&gt;hugo&lt;/code&gt;命令就会使用配置文件&lt;code&gt;hugo.toml&lt;/code&gt;中的配置来发布最新的内容到&lt;code&gt;public&lt;/code&gt;子目录中，将该目录中的内容发布到支持静态站点的托管服务器上就可以了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

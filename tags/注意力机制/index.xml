@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>注意力机制 on Hugo Theme Stack Starter</title><link>https://lbgitjp.github.io/blog/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/</link><description>Recent content in 注意力机制 on Hugo Theme Stack Starter</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 10 Jan 2026 06:00:00 +0000</lastBuildDate><atom:link href="https://lbgitjp.github.io/blog/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>注意力可视化 (Attention Visualization)的工具或方法</title><link>https://lbgitjp.github.io/blog/p/transformer-1/</link><pubDate>Sat, 10 Jan 2026 06:00:00 +0000</pubDate><guid>https://lbgitjp.github.io/blog/p/transformer-1/</guid><description>&lt;p&gt;注意力可视化是 &lt;strong&gt;“可解释性 AI (Explainable AI / XAI)”&lt;/strong&gt; 和 &lt;strong&gt;“机械可解释性 (Mechanistic Interpretability)”&lt;/strong&gt; 领域的核心内容。&lt;/p&gt;
+&lt;p&gt;需要明确的是：&lt;strong&gt;只有对于“开源模型”（如 Llama, Mistral, BERT, GPT-2 等），我们才能直接访问其内部权重来绘制注意力图。&lt;/strong&gt; 对于 ChatGPT、Claude 等闭源模型，我们无法直接获取注意力权重，只能通过“归因分析”等间接手段来模拟。&lt;/p&gt;
+&lt;p&gt;以下是目前主流的工具和方法，按从“交互式演示”到“硬核代码库”分类：&lt;/p&gt;
+&lt;h3 id="一-交互式可视化工具适合理解原理教学"&gt;一、 交互式可视化工具（适合理解原理/教学）
+&lt;/h3&gt;&lt;p&gt;如果你不想写代码，只想看懂注意力机制是如何工作的，这些网页工具是最好的选择。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Transformer Explainer (Politeknik)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：这是一个非常惊艳的网页应用，直接在浏览器中运行轻量级 GPT-2 模型。你可以输入文本，实时看到 Temperature 如何影响选择，以及&lt;strong&gt;模型在生成下一个词时关注了前面的哪些词&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;适用&lt;/strong&gt;：直观感受“为什么模型选了这个词”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关键词搜索&lt;/strong&gt;：&lt;code&gt;Transformer Explainer Georgia Tech&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Github&lt;/strong&gt;：&lt;a class="link" href="https://github.com/poloclub/transformer-explainer" target="_blank" rel="noopener"
+&gt;Transformer Explainer&lt;/a&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;LLM Visualization (by Brendan Bycroft)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：这是一个 3D 可视化项目。它将整个 Transformer 架构（包括每一层的 Attention Head）展开成三维结构。你可以点击具体的某个 Token，看到连线（Attention 权重）连接到了前面的哪些 Token。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：展示了 Query, Key, Value 矩阵是如何计算得出注意力的。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关键词搜索&lt;/strong&gt;：&lt;code&gt;llm visualization bbycroft&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Github&lt;/strong&gt;：&lt;a class="link" href="https://github.com/bbycroft/llm-viz" target="_blank" rel="noopener"
+&gt;LLM Visualization&lt;/a&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="二-python-库适合开发者研究人员"&gt;二、 Python 库（适合开发者/研究人员）
+&lt;/h3&gt;&lt;p&gt;如果你会用 Python 并且在本地运行模型（如 Hugging Face Transformers），这些库是标准配置。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;BERTViz&lt;/strong&gt; (经典老牌)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;简介&lt;/strong&gt;：专门用于 Transformer 模型注意力可视化的 Jupyter Notebook 工具。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主要视图&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Head View&lt;/em&gt;：展示某一层的某个注意力头（Head）关注了哪些词。&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Model View&lt;/em&gt;：宏观展示所有层和头的注意力模式。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;支持&lt;/strong&gt;：BERT, GPT-2, Llama 等绝大多数 Hugging Face 模型。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;代码示例&lt;/strong&gt;：
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;bertviz&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;head_view&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;head_view&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;model_attention&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tokens&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Ecco&lt;/strong&gt; (推荐)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;简介&lt;/strong&gt;：比 BERTViz 更现代，专为生成式语言模型（Generative LM）设计。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;杀手级功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Input Saliency&lt;/strong&gt;：通过颜色深浅，直接显示生成结果受输入中哪个词的影响最大。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Neuron Activation&lt;/strong&gt;：甚至能探索是哪些神经元被激活了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;适用&lt;/strong&gt;：分析“为什么模型生成了这句话”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Inseq&lt;/strong&gt; (Interpretability for Sequence Generation)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;简介&lt;/strong&gt;：一个较新的库，集成了多种归因方法（Attribution Methods）。不仅有 Attention，还有 Gradient（梯度）分析。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：可以生成非常漂亮的 HTML 报告，展示输入 Token 对输出 Token 的贡献度（Feature Attribution）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="三-针对闭源模型chatgptclaude的黑盒方法"&gt;三、 针对闭源模型（ChatGPT/Claude）的“黑盒”方法
+&lt;/h3&gt;&lt;p&gt;由于我们拿不到 OpenAI 的权重，无法画出真正的 Attention Map，但我们可以用**“特征归因” (Feature Attribution)** 来模拟。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;SHAP (SHapley Additive exPlanations)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;原理&lt;/strong&gt;：博弈论方法。它通过不断地“遮盖”输入中的某些词，观察输出概率的变化。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;逻辑&lt;/strong&gt;：如果我把“不”字删掉，模型输出“好”的概率从 0.1 变成了 0.9，那么“不”这个词的权重（注意力/重要性）就极高。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;缺点&lt;/strong&gt;：计算量大（因为要反复调用 API），且非常费钱。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;LIME (Local Interpretable Model-agnostic Explanations)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;原理&lt;/strong&gt;：与 SHAP 类似，通过扰动输入数据来训练一个简单的线性模型，从而近似解释复杂模型的局部行为。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;OpenAI/Anthropic 的 Logprobs（对数概率）&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;虽然不是可视化，但在 API 返回中开启 &lt;code&gt;logprobs&lt;/code&gt;，可以看到模型在选词时的“自信度”。这可以作为注意力的一个侧面印证（如果概率极高，通常意味着注意力高度集中在某些特定指令或模式上）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="四-应该如何选择"&gt;四、 应该如何选择？
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;我想学习原理，看个热闹&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;去玩 &lt;strong&gt;Transformer Explainer&lt;/strong&gt; 或 &lt;strong&gt;LLM Visualization (bbycroft)&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;我在做本地模型开发 (Llama/Qwen)，想调试 Prompt 或微调效果&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 &lt;strong&gt;BERTViz&lt;/strong&gt; 查看注意力头是否“散焦”。&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;Ecco&lt;/strong&gt; 查看输入词对输出的影响。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;我是 Prompt 工程师，用的是 ChatGPT&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;你无法使用上述可视化工具。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;替代方案&lt;/strong&gt;：使用我之前提到的**“剥洋葱法”**（手动删减词语看效果变化），这是最原始但最有效的“人肉注意力分析”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="一个简单的代码概念验证-使用-hugging-face"&gt;一个简单的代码概念验证 (使用 Hugging Face)
+&lt;/h3&gt;&lt;p&gt;如果你想自己动手写最基础的，Hugging Face 原生支持输出注意力：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;transformers&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;AutoModelForCausalLM&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;AutoTokenizer&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;AutoModelForCausalLM&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_pretrained&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;gpt2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;tokenizer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;AutoTokenizer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_pretrained&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;gpt2&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;inputs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;tokenizer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Hello world&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;return_tensors&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;pt&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 关键参数：output_attentions=True&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;outputs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;inputs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;output_attentions&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 拿到注意力张量：(层数, batch, heads, 序列长度, 序列长度)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 这里面存的就是所有的“连线权重”&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;attention_maps&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;outputs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;attentions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attention_maps&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;拿到这个 &lt;code&gt;attention_maps&lt;/code&gt; 矩阵后，你可以用 Matplotlib 的 &lt;code&gt;imshow&lt;/code&gt; 画一个热力图，那就是最基础的注意力可视化了。&lt;/p&gt;</description></item></channel></rss>

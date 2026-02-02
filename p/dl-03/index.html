@@ -1,0 +1,290 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="通过简单示例解释梯度通用公式及梯度消失梯度爆炸。"><title>深度学习中的梯度通用公式</title><link rel=canonical href=https://lbgitjp.github.io/blog/p/dl-03/><link rel=stylesheet href=/blog/scss/style.min.833d6eed45de56f48306bf57268d5b8cdfc8a60e8e7bdc99810464fcd033f7c6.css><meta property='og:title' content="深度学习中的梯度通用公式"><meta property='og:description' content="通过简单示例解释梯度通用公式及梯度消失梯度爆炸。"><meta property='og:url' content='https://lbgitjp.github.io/blog/p/dl-03/'><meta property='og:site_name' content='Hugo Theme Stack Starter'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='深度学习'><meta property='article:tag' content='反向传播'><meta property='article:published_time' content='2026-01-17T00:00:00+00:00'><meta property='article:modified_time' content='2026-01-17T00:00:00+00:00'><meta name=twitter:title content="深度学习中的梯度通用公式"><meta name=twitter:description content="通过简单示例解释梯度通用公式及梯度消失梯度爆炸。"><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/blog/><img src=/blog/img/avatar_hu_12316f02ad07fe88.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/blog>Hugo Theme Stack Starter</a></h1><h2 class=site-description>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2></div></header><ol class=menu-social><li><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com target=_blank title=Twitter rel=me><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/blog/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/blog/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/blog/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/blog/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#1-通用梯度公式>1. 通用梯度公式</a></li><li><a href=#2-公式逐项拆解>2. 公式逐项拆解</a></li><li><a href=#3-这个公式如何解释梯度消失>3. 这个公式如何解释“梯度消失”？</a></li><li><a href=#4-下面是严格对应通用梯度公式的代码>4. 下面是<strong>严格对应</strong>通用梯度公式的代码</a><ol><li><a href=#核心公式回顾>核心公式回顾</a></li><li><a href=#代码实现>代码实现</a></li><li><a href=#代码与公式的映射表>代码与公式的映射表</a></li><li><a href=#关键点解析代码中的递归体现>关键点解析：代码中的递归体现</a></li></ol></li><li><a href=#5-代码视角pytorch-中的-grad_output>5. 代码视角：PyTorch 中的 <code>grad_output</code></a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/blog/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/>深度学习</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/blog/p/dl-03/>深度学习中的梯度通用公式</a></h2><h3 class=article-subtitle>通过简单示例解释梯度通用公式及梯度消失梯度爆炸。</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published datetime=2026-01-17T00:00:00Z>Jan 17, 2026</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>5 minute read</time></div></footer></div></header><section class=article-content><p>假设总层数为 $L_{total}$，并关注从<strong>输出层</strong>到<strong>目标层 $n$</strong> 之间的那段路径。</p><p>这是针对任意第 $n$ 层权重 $w_n$ 的梯度通用公式：</p><h2 id=1-通用梯度公式>1. 通用梯度公式</h2>$$ \frac{\partial L}{\partial w_n} = \underbrace{\frac{\partial L}{\partial y}}_{\text{Loss导数}} \cdot \underbrace{\left[ \prod_{k=n+1}^{L_{total}} \left( \sigma'(z_k) \cdot w_k \right) \right]}_{\text{链式连乘项 (从输出层回传到 n+1 层)}} \cdot \underbrace{\sigma'(z_n)}_{\text{当前层激活导数}} \cdot \underbrace{a_{n-1}}_{\text{当前层输入}} $$<h2 id=2-公式逐项拆解>2. 公式逐项拆解</h2><p>为了看得更清楚，我们将这个公式拆解为四个部分，分别对应反向传播中的不同角色：</p><ol><li><p><strong>$\frac{\partial L}{\partial y}$ (Loss Gradient)</strong>:</p><ul><li>这是梯度的<strong>源头</strong>。</li><li>即损失函数对最终预测值的导数（例如 MSE 中的 $-(Y - \hat{Y})$）。</li></ul></li><li><p><strong>$\prod_{k=n+1}^{L_{total}} (\dots)$ (The Chain / Backprop Path)</strong>:</p><ul><li>这是<strong>核心连乘项</strong>，也是梯度消失/爆炸的“罪魁祸首”。</li><li>它代表了误差信号从最后一层 ($L_{total}$) 一路传导回第 $n+1$ 层所经过的所有变换。</li><li><strong>如果 $n$ 靠近输出层</strong>：这个连乘项很短，梯度通常比较正常。</li><li><strong>如果 $n$ 靠近输入层</strong>：这个连乘项极长，包含大量的 $w$ 和 $\sigma&rsquo;$ 相乘。</li></ul></li><li><p><strong>$\sigma&rsquo;(z_n)$ (Local Activation Gradient)</strong>:</p><ul><li>这是<strong>当前层 $n$</strong> 的激活函数导数。</li><li>它决定了误差信号进入该层线性部分时的衰减程度。</li></ul></li><li><p><strong>$a_{n-1}$ (Layer Input)</strong>:</p><ul><li>这是<strong>当前层 $n$</strong> 的输入值（即上一层 $n-1$ 的输出）。</li><li>在计算权重梯度时，必须乘上这个输入值（因为 $z = w \cdot a + b$，对 $w$ 求导就是 $a$）。</li></ul></li></ol><hr><h2 id=3-这个公式如何解释梯度消失>3. 这个公式如何解释“梯度消失”？</h2><p>通过这个通用公式，我们可以更直观地定义什么时候发生梯度消失。</p><p>假设我们需要更新靠近输入层的权重（即 $n$ 很小，而 $L_{total}$ 很大），中间的连乘项会有几十甚至上百项：</p>$$ \text{连乘项} = (\sigma' \cdot w)_{L_{total}} \cdot (\sigma' \cdot w)_{L_{total}-1} \cdots (\sigma' \cdot w)_{n+1} $$<p><strong>梯度消失的数学条件：</strong></p>$$ | \sigma'(z_k) \cdot w_k | < 1 $$<p>如果每一层的这个乘积都小于 1（例如使用 Sigmoid，$\sigma&rsquo;$ 最大才 0.25，若 $w$ 也是小数值），那么：</p>$$ 0.25 \times 0.25 \times \dots \times 0.25 \approx 0 $$<p>导致 $\frac{\partial L}{\partial w_n} \to 0$，深层网络的浅层参数无法更新。</p><p><strong>梯度爆炸的数学条件：</strong></p>$$ | \sigma'(z_k) \cdot w_k | > 1 $$<p>如果权重 $w$ 初始化得很大（例如 $w=2$），且激活函数导数不衰减（如 ReLU 在正区间导数为 1）：</p>$$ 2 \times 2 \times \dots \times 2 \to \infty $$<p>导致 $\frac{\partial L}{\partial w_n} \to \text{NaN}$，模型崩溃。</p><h2 id=4-下面是严格对应通用梯度公式的代码>4. 下面是<strong>严格对应</strong>通用梯度公式的代码</h2><p>代码中的变量命名完全照搬了公式中的术语（例如 <code>chain_product</code>, <code>local_sigma_prime</code>, <code>layer_input</code>），并把反向传播拆解得非常细致。</p><h3 id=核心公式回顾>核心公式回顾</h3>$$ \frac{\partial L}{\partial w_n} = \underbrace{\frac{\partial L}{\partial y}}_{\text{项1: Loss导数}} \cdot \underbrace{\left[ \prod_{k=n+1}^{L_{total}} \left( \sigma'(z_k) \cdot w_k \right) \right]}_{\text{项2: 链式连乘积 (来自后层)}} \cdot \underbrace{\sigma'(z_n)}_{\text{项3: 当前层导数}} \cdot \underbrace{a_{n-1}}_{\text{项4: 当前层输入}} $$<h3 id=代码实现>代码实现</h3><p>请特别留意 <code>backward</code> 函数中的注释，每一行都对应公式中的一项。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>StrictFormulaNN</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>layer_sizes</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>weights</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>biases</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>layer_sizes</span> <span class=o>=</span> <span class=n>layer_sizes</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=c1># 初始化权重 (Standard Normal Distribution)</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>layer_sizes</span><span class=p>)</span> <span class=o>-</span> <span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>n_in</span> <span class=o>=</span> <span class=n>layer_sizes</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=n>n_out</span> <span class=o>=</span> <span class=n>layer_sizes</span><span class=p>[</span><span class=n>i</span><span class=o>+</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>weights</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>np</span><span class=o>.</span><span class=n>random</span><span class=o>.</span><span class=n>randn</span><span class=p>(</span><span class=n>n_in</span><span class=p>,</span> <span class=n>n_out</span><span class=p>)</span> <span class=o>*</span> <span class=mf>0.1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>biases</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>np</span><span class=o>.</span><span class=n>zeros</span><span class=p>((</span><span class=mi>1</span><span class=p>,</span> <span class=n>n_out</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>sigmoid</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span> <span class=o>/</span> <span class=p>(</span><span class=mi>1</span> <span class=o>+</span> <span class=n>np</span><span class=o>.</span><span class=n>exp</span><span class=p>(</span><span class=o>-</span><span class=n>x</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>sigmoid_derivative</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>z</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 注意：公式中写的是 σ&#39;(z)，这里为了严谨，我们直接用 z 计算</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 虽然用 a * (1-a) 更快，但为了对应公式，我们用 z 算</span>
+</span></span><span class=line><span class=cl>        <span class=n>s</span> <span class=o>=</span> <span class=mi>1</span> <span class=o>/</span> <span class=p>(</span><span class=mi>1</span> <span class=o>+</span> <span class=n>np</span><span class=o>.</span><span class=n>exp</span><span class=p>(</span><span class=o>-</span><span class=n>z</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>s</span> <span class=o>*</span> <span class=p>(</span><span class=mi>1</span> <span class=o>-</span> <span class=n>s</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>forward</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>X</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>        前向传播：必须缓存 z (线性输出) 和 a (激活输出)
+</span></span></span><span class=line><span class=cl><span class=s2>        公式需要用到 z_n 和 a_{n-1}
+</span></span></span><span class=line><span class=cl><span class=s2>        &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>zs</span> <span class=o>=</span> <span class=p>[]</span>      <span class=c1># 存储所有的 z_n</span>
+</span></span><span class=line><span class=cl>        <span class=bp>self</span><span class=o>.</span><span class=n>as_</span> <span class=o>=</span> <span class=p>[</span><span class=n>X</span><span class=p>]</span>    <span class=c1># 存储所有的 a (a_0 是输入 X)</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=n>input_data</span> <span class=o>=</span> <span class=n>X</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>W</span><span class=p>,</span> <span class=n>b</span> <span class=ow>in</span> <span class=nb>zip</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>weights</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>biases</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>z</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>input_data</span><span class=p>,</span> <span class=n>W</span><span class=p>)</span> <span class=o>+</span> <span class=n>b</span>
+</span></span><span class=line><span class=cl>            <span class=n>a</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>sigmoid</span><span class=p>(</span><span class=n>z</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>zs</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>z</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>as_</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>a</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>input_data</span> <span class=o>=</span> <span class=n>a</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>as_</span><span class=p>[</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>backward</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>y_true</span><span class=p>,</span> <span class=n>learning_rate</span><span class=o>=</span><span class=mf>0.1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>        严格对应公式的梯度计算
+</span></span></span><span class=line><span class=cl><span class=s2>        &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=n>m</span> <span class=o>=</span> <span class=n>y_true</span><span class=o>.</span><span class=n>shape</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>grads_w</span> <span class=o>=</span> <span class=p>[</span><span class=kc>None</span><span class=p>]</span> <span class=o>*</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>weights</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>grads_b</span> <span class=o>=</span> <span class=p>[</span><span class=kc>None</span><span class=p>]</span> <span class=o>*</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>biases</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=c1># --- [项1] Loss 导数 (dL/dy) ---</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 假设 Loss = 0.5 * (y - y_true)^2</span>
+</span></span><span class=line><span class=cl>        <span class=c1># dL/dy = (y_pred - y_true)</span>
+</span></span><span class=line><span class=cl>        <span class=n>y_pred</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>as_</span><span class=p>[</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=n>loss_derivative</span> <span class=o>=</span> <span class=p>(</span><span class=n>y_pred</span> <span class=o>-</span> <span class=n>y_true</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=c1># 初始化 [项2] 链式连乘积 (Chain Product)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 在最顶层 (Output Layer) 后面没有其他层了，所以连乘项初始为 Loss导数本身</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 随着循环进行，这个变量会积累后面所有层的 (σ&#39; * w)</span>
+</span></span><span class=line><span class=cl>        <span class=n>chain_product</span> <span class=o>=</span> <span class=n>loss_derivative</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=c1># 从最后一层 (L-1) 遍历到 第一层 (0)</span>
+</span></span><span class=line><span class=cl>        <span class=n>num_layers</span> <span class=o>=</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>weights</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>n</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>num_layers</span> <span class=o>-</span> <span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 获取公式所需的变量</span>
+</span></span><span class=line><span class=cl>            <span class=n>z_n</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>zs</span><span class=p>[</span><span class=n>n</span><span class=p>]</span>          <span class=c1># 当前层的 z</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 注意!!!, 由于self.as_的长度比self.zs的长度多1，所以a_prev是self.as_[n]</span>
+</span></span><span class=line><span class=cl>            <span class=n>a_prev</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>as_</span><span class=p>[</span><span class=n>n</span><span class=p>]</span>      <span class=c1># [项4] 当前层的输入 a_{n-1}</span>
+</span></span><span class=line><span class=cl>            <span class=n>W_n</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>weights</span><span class=p>[</span><span class=n>n</span><span class=p>]</span>     <span class=c1># 当前层的权重</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>            <span class=c1># --- [项3] 当前层的激活导数 σ&#39;(z_n) ---</span>
+</span></span><span class=line><span class=cl>            <span class=n>local_sigma_prime</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>sigmoid_derivative</span><span class=p>(</span><span class=n>z_n</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>            <span class=c1># 计算当前层的误差项 delta_n</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 这里的运算逻辑是：(连乘项) * (当前层导数)</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 对应公式中的： [LossGrad * Chain] * σ&#39;(z_n)</span>
+</span></span><span class=line><span class=cl>            <span class=n>delta_n</span> <span class=o>=</span> <span class=n>chain_product</span> <span class=o>*</span> <span class=n>local_sigma_prime</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>            <span class=c1># --- 计算并存储梯度 ---</span>
+</span></span><span class=line><span class=cl>            <span class=c1># dL/dw_n = [项4: a_{n-1}] * [delta_n]</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 注意矩阵乘法顺序：Input.T dot Delta</span>
+</span></span><span class=line><span class=cl>            <span class=n>grads_w</span><span class=p>[</span><span class=n>n</span><span class=p>]</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>a_prev</span><span class=o>.</span><span class=n>T</span><span class=p>,</span> <span class=n>delta_n</span><span class=p>)</span> <span class=o>/</span> <span class=n>m</span>
+</span></span><span class=line><span class=cl>            <span class=n>grads_b</span><span class=p>[</span><span class=n>n</span><span class=p>]</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>sum</span><span class=p>(</span><span class=n>delta_n</span><span class=p>,</span> <span class=n>axis</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span> <span class=n>keepdims</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span> <span class=o>/</span> <span class=n>m</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>            <span class=c1># --- 更新 [项2] 链式连乘积 (为下一层 n-1 做准备) ---</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 此时我们要穿过当前层，往回传。</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 根据链式法则，传给下一层的信号需要乘以当前层的权重 W_n</span>
+</span></span><span class=line><span class=cl>            <span class=c1># 对应公式连乘符号里的乘法操作： * w_k</span>
+</span></span><span class=line><span class=cl>            <span class=n>chain_product</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>dot</span><span class=p>(</span><span class=n>delta_n</span><span class=p>,</span> <span class=n>W_n</span><span class=o>.</span><span class=n>T</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># --- 应用梯度更新 ---</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>num_layers</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>weights</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>-=</span> <span class=n>learning_rate</span> <span class=o>*</span> <span class=n>grads_w</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>            <span class=bp>self</span><span class=o>.</span><span class=n>biases</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>  <span class=o>-=</span> <span class=n>learning_rate</span> <span class=o>*</span> <span class=n>grads_b</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># --- 验证代码 ---</span>
+</span></span><span class=line><span class=cl><span class=c1># 数据</span>
+</span></span><span class=line><span class=cl><span class=n>X</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>array</span><span class=p>([[</span><span class=mi>0</span><span class=p>,</span><span class=mi>0</span><span class=p>],</span> <span class=p>[</span><span class=mi>0</span><span class=p>,</span><span class=mi>1</span><span class=p>],</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>0</span><span class=p>],</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>1</span><span class=p>]])</span>
+</span></span><span class=line><span class=cl><span class=n>Y</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>array</span><span class=p>([[</span><span class=mi>0</span><span class=p>],</span> <span class=p>[</span><span class=mi>1</span><span class=p>],</span> <span class=p>[</span><span class=mi>1</span><span class=p>],</span> <span class=p>[</span><span class=mi>0</span><span class=p>]])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 初始化网络 [2 -&gt; 3 -&gt; 1]</span>
+</span></span><span class=line><span class=cl><span class=n>nn</span> <span class=o>=</span> <span class=n>StrictFormulaNN</span><span class=p>([</span><span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>1</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 训练一步演示</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;--- Training Step 1 ---&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>pred</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>forward</span><span class=p>(</span><span class=n>X</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>loss</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>mean</span><span class=p>(</span><span class=mf>0.5</span> <span class=o>*</span> <span class=p>(</span><span class=n>pred</span> <span class=o>-</span> <span class=n>Y</span><span class=p>)</span><span class=o>**</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Initial Loss: </span><span class=si>{</span><span class=n>loss</span><span class=si>:</span><span class=s2>.6f</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>nn</span><span class=o>.</span><span class=n>backward</span><span class=p>(</span><span class=n>Y</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>pred_new</span> <span class=o>=</span> <span class=n>nn</span><span class=o>.</span><span class=n>forward</span><span class=p>(</span><span class=n>X</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>loss_new</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>mean</span><span class=p>(</span><span class=mf>0.5</span> <span class=o>*</span> <span class=p>(</span><span class=n>pred_new</span> <span class=o>-</span> <span class=n>Y</span><span class=p>)</span><span class=o>**</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s2>&#34;Loss after 1 step: </span><span class=si>{</span><span class=n>loss_new</span><span class=si>:</span><span class=s2>.6f</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Loss decreased:&#34;</span><span class=p>,</span> <span class=n>loss_new</span> <span class=o>&lt;</span> <span class=n>loss</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=代码与公式的映射表>代码与公式的映射表</h3><div class=table-wrapper><table><thead><tr><th style=text-align:left>代码变量</th><th style=text-align:left>公式项</th><th style=text-align:left>解释</th></tr></thead><tbody><tr><td style=text-align:left><code>loss_derivative</code></td><td style=text-align:left>$\frac{\partial L}{\partial y}$</td><td style=text-align:left><strong>源头</strong>：损失函数对最终输出的导数。</td></tr><tr><td style=text-align:left><code>chain_product</code></td><td style=text-align:left>$\frac{\partial L}{\partial y} \cdot \prod (\sigma&rsquo; \cdot w)$</td><td style=text-align:left><strong>传递者</strong>：包含从 Loss 到当前层后面所有层的导数积累。在计算当前层梯度前，它代表“后方传来的误差总和”。</td></tr><tr><td style=text-align:left><code>local_sigma_prime</code></td><td style=text-align:left>$\sigma&rsquo;(z_n)$</td><td style=text-align:left><strong>门控</strong>：当前层的激活函数导数，控制误差能保留多少穿过激活层。</td></tr><tr><td style=text-align:left><code>delta_n</code></td><td style=text-align:left>上述三项的乘积</td><td style=text-align:left><strong>总误差</strong>：当前层线性输出 $Z_n$ 的敏感度。</td></tr><tr><td style=text-align:left><code>a_prev</code></td><td style=text-align:left>$a_{n-1}$</td><td style=text-align:left><strong>输入</strong>：当前层的输入值，根据 $z=wa+b$，对 $w$ 求导就是 $a$。</td></tr></tbody></table></div><h3 id=关键点解析代码中的递归体现>关键点解析：代码中的递归体现</h3><p>你可能注意到代码里没有显式的写一个 $\prod$ (连乘符号)。这是因为编程中的 <code>chain_product = np.dot(delta_n, W_n.T)</code> 这一行赋值语句，<strong>在循环过程中自然地完成了连乘</strong>。</p><ol><li><strong>初始状态 ($n=Output$)</strong>：<code>chain_product</code> 只有 $\frac{\partial L}{\partial y}$。</li><li><strong>循环第一轮结束</strong>：<code>chain_product</code> 变成了 $\frac{\partial L}{\partial y} \cdot \sigma&rsquo;(z_{out}) \cdot W_{out}$。</li><li><strong>循环第二轮结束</strong>：<code>chain_product</code> 变成了 $\frac{\partial L}{\partial y} \cdot [\sigma&rsquo;(z_{out}) \cdot W_{out}] \cdot [\sigma&rsquo;(z_{hidden}) \cdot W_{hidden}]$。</li></ol><p>这正是公式中那个连乘符号 $\prod$ 的严格代码实现。</p><h2 id=5-代码视角pytorch-中的-grad_output>5. 代码视角：PyTorch 中的 <code>grad_output</code></h2><p>如果写过 PyTorch 的自定义 Autograd Function，会看到 <code>backward</code> 函数的参数里有一个 <code>grad_output</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>class</span> <span class=nc>MyLinear</span><span class=p>(</span><span class=n>torch</span><span class=o>.</span><span class=n>autograd</span><span class=o>.</span><span class=n>Function</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=nd>@staticmethod</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>forward</span><span class=p>(</span><span class=n>ctx</span><span class=p>,</span> <span class=nb>input</span><span class=p>,</span> <span class=n>weight</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>ctx</span><span class=o>.</span><span class=n>save_for_backward</span><span class=p>(</span><span class=nb>input</span><span class=p>,</span> <span class=n>weight</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nb>input</span> <span class=o>@</span> <span class=n>weight</span><span class=o>.</span><span class=n>t</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nd>@staticmethod</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>backward</span><span class=p>(</span><span class=n>ctx</span><span class=p>,</span> <span class=n>grad_output</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 这个grad_output对应前面代码中的chain_product</span>
+</span></span><span class=line><span class=cl>        <span class=nb>input</span><span class=p>,</span> <span class=n>weight</span> <span class=o>=</span> <span class=n>ctx</span><span class=o>.</span><span class=n>saved_tensors</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 对应前面公式连乘符号里的乘法操作: * w_k</span>
+</span></span><span class=line><span class=cl>        <span class=n>grad_input</span> <span class=o>=</span> <span class=n>grad_output</span> <span class=o>@</span> <span class=n>weight</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1># 对应前面公式中的项4: 当前层输入: * a_{n-1}</span>
+</span></span><span class=line><span class=cl>        <span class=n>grad_weight</span> <span class=o>=</span> <span class=n>grad_output</span><span class=o>.</span><span class=n>t</span><span class=p>()</span> <span class=o>@</span> <span class=nb>input</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>grad_input</span><span class=p>,</span> <span class=n>grad_weight</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>grad_output</code>：这就是从上一层（逻辑上的后一层）传回来的chain_product。</li><li><code>backward</code> 的任务：利用这个chain_product，计算出当前层输入的梯度 <code>grad_input</code>（即传给下一层的 chain_product）。</li></ul></section><footer class=article-footer><section class=article-tags><a href=/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/>深度学习</a>
+<a href=/blog/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/>反向传播</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{const e=[".main-article",".widget--toc"];e.forEach(e=>{const t=document.querySelector(e);t&&renderMathInElement(t,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})})</script></article><aside class=related-content--wrapper><h2 class=section-title>Related content</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/blog/p/dl-02/><div class=article-details><h2 class=article-title>理解深度学习中的梯度下降和反向传播</h2></div></a></article><article><a href=/blog/p/dl-01/><div class=article-details><h2 class=article-title>为什么深度学习到处都是使用这个公式：y=xW+b?</h2></div></a></article><article><a href=/blog/p/transformer-3/><div class=article-details><h2 class=article-title>RoPE(旋转位置编码)</h2></div></a></article><article><a href=/blog/p/transformer-2/><div class=article-details><h2 class=article-title>Transformer/GPT架构背后的数学原理</h2></div></a></article><article><a href=/blog/p/transformer-1/><div class=article-details><h2 class=article-title>注意力可视化 (Attention Visualization)的工具或方法</h2></div></a></article></div></div></aside><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2026 Hugo Theme Stack Starter</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.33.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/blog/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

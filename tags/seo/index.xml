@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SEO on Hugo Theme Stack Starter</title><link>https://lbgitjp.github.io/blog/tags/seo/</link><description>Recent content in SEO on Hugo Theme Stack Starter</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 07 Jan 2026 08:00:00 +0000</lastBuildDate><atom:link href="https://lbgitjp.github.io/blog/tags/seo/index.xml" rel="self" type="application/rss+xml"/><item><title>建设博客站点 - 6. 将站点加入Google搜索引擎索引</title><link>https://lbgitjp.github.io/blog/p/build-blog-6/</link><pubDate>Wed, 07 Jan 2026 08:00:00 +0000</pubDate><guid>https://lbgitjp.github.io/blog/p/build-blog-6/</guid><description>&lt;h2 id="1-问题"&gt;1. 问题
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;当前的站点只能通过网址访问，在&lt;code&gt;Google&lt;/code&gt;等搜索引擎中并不可见，需要将站点加入搜索引擎进行索引才行，下面介绍如何将站点加入&lt;code&gt;Google&lt;/code&gt;搜索引擎索引。为了提高站点的可见性，应尽可能的将站点加入各个搜索引擎进行索引。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="2-加入google搜索引擎"&gt;2. 加入Google搜索引擎
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;需要创建一个Google账号，然后进行到&lt;a class="link" href="https://search.google.com/search-console/welcome" title="Google Search Console"
+target="_blank" rel="noopener"
+&gt;Google Search Console&lt;/a&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;选择&lt;strong&gt;网址前缀&lt;/strong&gt;选项来添加网址，这样无论是否拥有域名的控制权都能有效。
+&lt;img src="https://lbgitjp.github.io/blog/p/build-blog-6/search-console.png"
+width="762"
+height="483"
+srcset="https://lbgitjp.github.io/blog/p/build-blog-6/search-console_hu_489f0ce18854838f.png 480w, https://lbgitjp.github.io/blog/p/build-blog-6/search-console_hu_ca335696bc59ffa.png 1024w"
+loading="lazy"
+alt="google search console"
+class="gallery-image"
+data-flex-grow="157"
+data-flex-basis="378px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在网址文本框中输入网址&lt;a class="link" href="https://lbgitjp.github.io/blog/" title="https://lbgitjp.github.io/blog/"
+target="_blank" rel="noopener"
+&gt;https://lbgitjp.github.io/blog/&lt;/a&gt;并点击“继续”按钮，会弹出&lt;strong&gt;验证所有权&lt;/strong&gt;界面。
+&lt;img src="https://lbgitjp.github.io/blog/p/build-blog-6/validate.png"
+width="648"
+height="544"
+srcset="https://lbgitjp.github.io/blog/p/build-blog-6/validate_hu_f4009db4887d063c.png 480w, https://lbgitjp.github.io/blog/p/build-blog-6/validate_hu_d8e03c7b342a4dbe.png 1024w"
+loading="lazy"
+alt="*验证所有权"
+class="gallery-image"
+data-flex-grow="119"
+data-flex-basis="285px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;将所有权验证文件放置在&lt;code&gt;blog&lt;/code&gt;库&lt;code&gt;main&lt;/code&gt;分支的&lt;code&gt;static/&lt;/code&gt;目录下，即应位于&lt;code&gt;static/googlec720ddd58802c23f.html&lt;/code&gt;。该目录专门用于存放静态资产（如图像、CSS文件或验证文件），&lt;code&gt;Hugo&lt;/code&gt;在运行构建命令（如&lt;code&gt;hugo --minify&lt;/code&gt;）时，会自动将&lt;code&gt;static/&lt;/code&gt;中的内容直接复制到输出目录（默认为&lt;code&gt;public/&lt;/code&gt;）的根目录中。然后&lt;code&gt;commit&lt;/code&gt;提交&lt;code&gt;blog&lt;/code&gt;库的&lt;code&gt;main&lt;/code&gt;分支，并&lt;code&gt;push&lt;/code&gt;到&lt;code&gt;Github&lt;/code&gt;服务器端。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;等&lt;code&gt;Github&lt;/code&gt;服务器端&lt;code&gt;GitHub Actions&lt;/code&gt;工作流运行完成后，点击“验证”按钮，当验证通过后点击“前往资源页面”就进入到Google Search Console管理界面。
+&lt;img src="https://lbgitjp.github.io/blog/p/build-blog-6/validate-complete.png"
+width="650"
+height="293"
+srcset="https://lbgitjp.github.io/blog/p/build-blog-6/validate-complete_hu_e004b33241f09f53.png 480w, https://lbgitjp.github.io/blog/p/build-blog-6/validate-complete_hu_c1b13d6e957725f4.png 1024w"
+loading="lazy"
+alt="*验证完成"
+class="gallery-image"
+data-flex-grow="221"
+data-flex-basis="532px"
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在Google Search Console管理界面左侧菜单中，选择“站点地图”，然后在右侧地址中输入&lt;code&gt;sitemap.xml&lt;/code&gt;，然后提交，当显示“已成功提交站点地图”后，便完成了站点地图提交，这将帮助Google了解站点结构，加速爬取和索引。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>
